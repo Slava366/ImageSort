@@ -41,7 +41,7 @@ public class GeoDecoder {
     private GeoServerResponse getResponse() throws ParserConfigurationException, IOException, SAXException, XPathExpressionException {
         Map<String, String> nodes = new LinkedHashMap<>();
         if(!metaFile.isContainsMetadata()) return new GeoServerResponse(nodes);
-        URL url = new URL(String.format(GEO_SERVER_URL_TEMPLATE, metaFile.getGpsLocation(), responseLanguage));//todo
+        URL url = new URL(String.format(GEO_SERVER_URL_TEMPLATE, metaFile.getGpsLocation(), responseLanguage));
         DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
         Document document = documentBuilder.parse(url.openStream());

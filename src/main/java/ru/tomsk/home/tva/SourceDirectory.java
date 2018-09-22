@@ -17,20 +17,21 @@ public class SourceDirectory implements FileFilter {
     private List<MetaFile> metaFiles = new LinkedList<>();
 
 
-    public SourceDirectory(String pathname) {
+    public SourceDirectory(String pathname) throws IOException {
         this(new File(pathname));
     }
 
-    public SourceDirectory(File file) {
+    public SourceDirectory(File file) throws IOException {
         if(null == file) throw new NullPointerException("The source directory path cannot be null!");
         if(!file.exists()) throw new IllegalArgumentException(String.format("The source directory '%s' does not exist!", file.getAbsolutePath()));
-        if(!file.isDirectory()) throw new IllegalArgumentException(String.format("The file '%s' is not a source directory!", file.getAbsolutePath()));
+        if(!file.isDirectory())
+            throw new IllegalArgumentException(String.format("The file '%s' is not a source directory!", file.getAbsolutePath()));
         try {
             sourceDirectory = file.getCanonicalFile();
         } catch (IOException e) {
             sourceDirectory = file;
         }
-        sourceDirectory.listFiles(this);
+        if(null == sourceDirectory.listFiles(this)) throw new IOException("Unable to list files!");
     }
 
     @Override
