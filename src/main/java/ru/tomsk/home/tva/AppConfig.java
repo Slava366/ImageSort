@@ -18,6 +18,10 @@ public class AppConfig {
     @Value("${app.button.start}")
     private String appStartButtonText;
 
+    @Bean
+    public AppTextArea appTextArea() {
+        return new AppTextArea();
+    }
 
     @Bean
     public AppStartButton appStartButton() {

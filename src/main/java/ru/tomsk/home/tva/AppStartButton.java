@@ -1,6 +1,7 @@
 package ru.tomsk.home.tva;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.swing.*;
@@ -11,8 +12,21 @@ import java.io.File;
 @Service
 public class AppStartButton extends JButton implements ActionListener {
 
+    private boolean sorting = false;
+
+    private int position;
+
     @Autowired
     AppFrame appFrame;
+
+    @Autowired
+    AppTextArea appTextArea;
+
+    @Autowired
+    AppChooseButton appChooseButton;
+
+    @Autowired
+    AppProgressBar appProgressBar;
 
     private AppStartButton() {
     }
@@ -25,27 +39,51 @@ public class AppStartButton extends JButton implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if((null == appFrame.getSourceDirectory()) || appFrame.getSourceDirectory().isEmpty()) {
-            JOptionPane.showMessageDialog(appFrame, "You must choose source directory!", "Source directory error", JOptionPane.ERROR_MESSAGE);
-            return;
+        if(sorting) {
+            sorting = false;
+            setText("Sort");
+            appFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            appChooseButton.setEnabled(true);
+        } else {
+            sorting = true;
+            setText("Stop");
+            appFrame.setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+            appChooseButton.setEnabled(false);
         }
-        SourceDirectory sourceDirectory;
-        try {
-            sourceDirectory = new SourceDirectory(appFrame.getSourceDirectory());
-            System.out.println(sourceDirectory.getFilesAmount());
-            System.out.println(sourceDirectory.getMetaFilesAmount());
-            for (MetaFile metaFile : sourceDirectory.getMetaFiles()) {
-                GeoDecoder geoDecoder = new GeoDecoder(metaFile);
-                try {
-                    File sortedFile = geoDecoder.getSortedFile();
-                    metaFile.sortFile(sortedFile);
-                    System.out.println(sortedFile.getAbsolutePath());
-                } catch (Exception e1) {
-                    System.out.println(e1.getMessage());
-                }
+    }
+
+    @Scheduled(fixedDelay = 1000)
+    private void sortFiles() {
+        while(sorting && (position < appChooseButton.getSourceDirectory().getMetaFilesAmount())) {
+            MetaFile metaFile = appChooseButton.getSourceDirectory().getMetaFiles().get(position);
+            GeoDecoder geoDecoder = new GeoDecoder(metaFile);
+            File sortedFile;
+            try {
+                sortedFile = geoDecoder.getSortedFile();
+                metaFile.sortFile(sortedFile);
+                appTextArea.addText(
+                        String.format(
+                                "[%d/%d] Successfully moved the file - %s%n",
+                                ++position,
+                                appChooseButton.getSourceDirectory().getMetaFilesAmount(),
+                                sortedFile.getAbsolutePath()
+                        )
+                );
+            } catch (Exception e1) {
+                appTextArea.addText(
+                        String.format(
+                                "[%d/%d] [ERROR] Unable to move the file - %s%n",
+                                ++position,
+                                appChooseButton.getSourceDirectory().getMetaFilesAmount(),
+                                metaFile.getFile().getAbsolutePath()
+                        )
+                );
             }
-        } catch (Exception e1) {
-            JOptionPane.showMessageDialog(appFrame, e1.getMessage(), "Source directory error", JOptionPane.ERROR_MESSAGE);
+            appProgressBar.setValue(position);
         }
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 }

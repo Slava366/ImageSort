@@ -21,6 +21,9 @@ public class AppChooseButton extends JButton implements ActionListener {
     @Autowired
     AppFrame appFrame;
 
+    @Autowired
+    AppTextArea appTextArea;
+
     private AppChooseButton() {
     }
 
@@ -39,13 +42,19 @@ public class AppChooseButton extends JButton implements ActionListener {
             String directory = chooser.getSelectedFile().getAbsolutePath();
             try {
                 sourceDirectory = new SourceDirectory(directory);
-                System.out.println(sourceDirectory.getFilesAmount());
-                System.out.println(sourceDirectory.getMetaFilesAmount());
                 if(0 < sourceDirectory.getMetaFilesAmount()) {
                     appFrame.getSourceDirectoryTextField().setText(directory);
                     appProgressBar.setMaximum(sourceDirectory.getMetaFilesAmount());
                     appProgressBar.setValue(0);
                     appStartButton.setEnabled(true);
+                    appTextArea.setText(
+                            String.format(
+                                    "The source directory contains:%n    Files: %d%n    Files with metadata: %d%n",
+                                    sourceDirectory.getFilesAmount(),
+                                    sourceDirectory.getMetaFilesAmount()
+                            )
+                    );
+                    appStartButton.setPosition(0);
                 } else {
                     JOptionPane.showMessageDialog(appFrame, "Source directory does not contain files with a metadata!", "Source directory warning", JOptionPane.WARNING_MESSAGE);
                 }

@@ -1,19 +1,19 @@
 package ru.tomsk.home.tva;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 @Service
 public class AppFrame extends JFrame {
 
     private JTextField sourceDirectoryTextField = new JTextField();
+
+    @Autowired
+    AppTextArea appTextArea;
 
     @Autowired
     AppChooseButton appChooseButton;
@@ -57,15 +57,13 @@ public class AppFrame extends JFrame {
         appSouthPanel.add(appStartButton);
         add(appSouthPanel, BorderLayout.SOUTH);
 
+        add(new JScrollPane(appTextArea, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS), BorderLayout.CENTER);
+
         this.setVisible(true);
     }
 
     public String getSourceDirectory() {
         return sourceDirectoryTextField.getText();
-    }
-
-    public void setSourceDirectory(String sourceDirectory) {
-        sourceDirectoryTextField.setText(sourceDirectory);
     }
 
     public JTextField getSourceDirectoryTextField() {
