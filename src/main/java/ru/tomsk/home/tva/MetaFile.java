@@ -61,9 +61,9 @@ public class MetaFile {
     public void sortFile(File sortedFile) throws IOException {
         if(null == sortedFile) throw new NullPointerException("Argument 'sortedFile' cannot be null!");
         File sortedDirectory = new File(sortedFile.getParent());
-        if(sortedDirectory.mkdirs() || sortedDirectory.exists()) {
+        /*if(sortedDirectory.mkdirs() || sortedDirectory.exists()) {
             if(!file.renameTo(sortedFile)) throw new IOException(String.format("Cannot move file '%s'", file.getAbsolutePath()));
-        }
+        }*/
     }
 
     public File getFile() {

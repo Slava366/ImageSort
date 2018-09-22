@@ -81,6 +81,13 @@ public class AppStartButton extends JButton implements ActionListener {
             }
             appProgressBar.setValue(position);
         }
+        if((null != appChooseButton.getSourceDirectory()) && (position == appChooseButton.getSourceDirectory().getMetaFilesAmount())) {
+            sorting = false;
+            setText("Sort");
+            setEnabled(false);
+            appFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+            appChooseButton.setEnabled(true);
+        }
     }
 
     public void setPosition(int position) {
