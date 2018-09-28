@@ -19,8 +19,8 @@ public class Config {
     }
 
     @Bean
-    public SourceDirectoryPanel sourceDirectoryPanel(MainFrame mainFrame) {
-        return new SourceDirectoryPanel(mainFrame);
+    public SourceDirectoryPanel sourceDirectoryPanel() {
+        return new SourceDirectoryPanel();
     }
 
     @Bean

@@ -75,13 +75,6 @@ public class MainFrame extends JFrame {
     }
 
     private void doStart() {
-        sorting = true;
-        buttonsPanel.getStartButton().setEnabled(false);
-        buttonsPanel.getPauseButton().setEnabled(true);
-        sourceDirectoryPanel.getDirectoryTextField().setEditable(false);
-        sourceDirectoryPanel.getChooseButton().setEnabled(false);
-        buttonsPanel.getLanguageButton().setEnabled(false);
-        buttonsPanel.getFolderButton().setEnabled(false);
         String withoutGpsFolder = sourceDirectoryPanel.getDirectory().concat(File.separator).concat(buttonsPanel.getFolder());
         File withoutGpsFolderFile = new File(withoutGpsFolder);
         if(!withoutGpsFolderFile.exists() & !withoutGpsFolderFile.mkdirs()) {
@@ -93,16 +86,13 @@ public class MainFrame extends JFrame {
             doPause();
             return;
         }
-        if(0 == informationPanel.getTotal()) {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Source directory does not contain any files!",
-                    "Warning",
-                    JOptionPane.WARNING_MESSAGE
-            );
-            doPause();
-            return;
-        }
+        sorting = true;
+        buttonsPanel.getStartButton().setEnabled(false);
+        buttonsPanel.getPauseButton().setEnabled(true);
+        sourceDirectoryPanel.getDirectoryTextField().setEditable(false);
+        sourceDirectoryPanel.getChooseButton().setEnabled(false);
+        buttonsPanel.getLanguageButton().setEnabled(false);
+        buttonsPanel.getFolderButton().setEnabled(false);
         //todo
     }
 

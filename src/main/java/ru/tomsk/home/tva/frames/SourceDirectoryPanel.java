@@ -1,29 +1,22 @@
 package ru.tomsk.home.tva.frames;
 
-
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
-@org.springframework.stereotype.Component
+@Component
 public class SourceDirectoryPanel {
-
-    @Autowired
-    private ButtonsPanel buttonsPanel;
 
     private static final String LABEL_TEXT = "Source directoryTextField:";
     private static final String CHOOSE_BUTTON_TEXT = "...";
     private static final String CHOOSE_DIALOG_TITLE = "Select source directoryTextField";
 
     private JTextField directoryTextField;
-    private Component parent;
     private JButton chooseButton;
 
 
-    public SourceDirectoryPanel(Component parent) {
-        this.parent = parent;
+    public SourceDirectoryPanel() {
         directoryTextField = new JTextField();
         directoryTextField.setColumns(10);
     }
