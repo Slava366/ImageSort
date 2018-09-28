@@ -32,4 +32,16 @@ public class ButtonsPanel {
             panel.add(panel2, BorderLayout.CENTER);
         return panel;
     }
+
+    public JButton getOptions() {
+        return options;
+    }
+
+    public JButton getPause() {
+        return pause;
+    }
+
+    public JButton getStart() {
+        return start;
+    }
 }

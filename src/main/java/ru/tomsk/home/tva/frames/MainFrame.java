@@ -42,6 +42,12 @@ public class MainFrame extends JFrame {
     @PostConstruct
     private void showFrame() {
         addPanels();
+        doStart();
         setVisible(true);
+    }
+
+    private void doStart() {
+        buttonsPanel.getStart().setEnabled(false);
+        buttonsPanel.getPause().setEnabled(false);
     }
 }

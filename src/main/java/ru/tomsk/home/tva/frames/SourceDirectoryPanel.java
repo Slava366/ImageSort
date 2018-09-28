@@ -1,11 +1,17 @@
 package ru.tomsk.home.tva.frames;
 
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
 @org.springframework.stereotype.Component
 public class SourceDirectoryPanel {
+
+    @Autowired
+    private ButtonsPanel buttonsPanel;
 
     private static final String LABEL_TEXT = "Source directory:";
     private static final String CHOOSE_BUTTON_TEXT = "...";
@@ -16,9 +22,16 @@ public class SourceDirectoryPanel {
 
 
     public SourceDirectoryPanel(Component parent) {
+        this.parent = parent;
         directory = new JTextField();
         directory.setColumns(10);
-        this.parent = parent;
+        directory.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(!getDirectory().isEmpty()) buttonsPanel.getStart().setEnabled(true);
+                else buttonsPanel.getStart().setEnabled(false);
+            }
+        });
     }
 
     public JPanel toJPanel() {
@@ -33,6 +46,7 @@ public class SourceDirectoryPanel {
                 fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 if(JFileChooser.APPROVE_OPTION == fileChooser.showOpenDialog(parent)) {
                     setDirectory(fileChooser.getSelectedFile().getAbsolutePath());
+                    buttonsPanel.getStart().setEnabled(true);
                 }
             });
             panel.add(button, BorderLayout.EAST);
