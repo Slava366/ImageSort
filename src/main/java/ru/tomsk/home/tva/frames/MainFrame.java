@@ -6,8 +6,9 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.io.File;
 
 @Component
 public class MainFrame extends JFrame {
@@ -44,6 +45,25 @@ public class MainFrame extends JFrame {
         getContentPane().add(panel, BorderLayout.CENTER);
         buttonsPanel.getStartButton().addActionListener(e -> doStart());
         buttonsPanel.getPauseButton().addActionListener(e -> doPause());
+        sourceDirectoryPanel.getChooseButton().addActionListener(e -> doChoose());
+        sourceDirectoryPanel.getDirectoryTextField().addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if(!sourceDirectoryPanel.getDirectory().isEmpty()) {
+                    int amount = directoryFilesAmount(new File(sourceDirectoryPanel.getDirectory()));
+                    if(0 < amount) {
+                        informationPanel.setTotal(amount);
+                        buttonsPanel.getStartButton().setEnabled(true);
+                    } else {
+                        informationPanel.setTotal(0);
+                        buttonsPanel.getStartButton().setEnabled(false);
+                    }
+                } else {
+                    informationPanel.setTotal(0);
+                    buttonsPanel.getStartButton().setEnabled(false);
+                }
+            }
+        });
     }
 
     @PostConstruct
@@ -62,6 +82,28 @@ public class MainFrame extends JFrame {
         sourceDirectoryPanel.getChooseButton().setEnabled(false);
         buttonsPanel.getLanguageButton().setEnabled(false);
         buttonsPanel.getFolderButton().setEnabled(false);
+        String withoutGpsFolder = sourceDirectoryPanel.getDirectory().concat(File.separator).concat(buttonsPanel.getFolder());
+        File withoutGpsFolderFile = new File(withoutGpsFolder);
+        if(!withoutGpsFolderFile.exists() & !withoutGpsFolderFile.mkdirs()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    String.format("Cannot create folder '%s'!", withoutGpsFolder),
+                    "Error",
+                    JOptionPane.ERROR_MESSAGE);
+            doPause();
+            return;
+        }
+        if(0 == informationPanel.getTotal()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Source directory does not contain any files!",
+                    "Warning",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            doPause();
+            return;
+        }
+        //todo
     }
 
     private void doPause() {
@@ -72,5 +114,32 @@ public class MainFrame extends JFrame {
         sourceDirectoryPanel.getChooseButton().setEnabled(true);
         buttonsPanel.getLanguageButton().setEnabled(true);
         buttonsPanel.getFolderButton().setEnabled(true);
+    }
+
+    private void doChoose() {
+        JFileChooser fileChooser = new JFileChooser(sourceDirectoryPanel.getDirectory());
+        fileChooser.setDialogTitle(sourceDirectoryPanel.getChooseDialogTitle());
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        if(JFileChooser.APPROVE_OPTION == fileChooser.showOpenDialog(this)) {
+            int amount = directoryFilesAmount(fileChooser.getSelectedFile());
+            if(0 < amount) {
+                informationPanel.setTotal(amount);
+                sourceDirectoryPanel.setDirectory(fileChooser.getSelectedFile().getAbsolutePath());
+                buttonsPanel.getStartButton().setEnabled(true);
+            } else {
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Source directory does not contain any files!",
+                        "Warning",
+                        JOptionPane.WARNING_MESSAGE
+                );
+            }
+        }
+    }
+
+    private int directoryFilesAmount(File source) {
+        File[] files = source.listFiles(File::isFile);
+        if((null == files) || (0 == files.length)) return 0;
+        return files.length;
     }
 }
