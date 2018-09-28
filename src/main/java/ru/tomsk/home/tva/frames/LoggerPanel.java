@@ -47,5 +47,7 @@ public class LoggerPanel {
 
     public void setText(String text) {
         if(null == text) throw new NullPointerException("Argument cannot be null!");
+        clear();
+        addText(text);
     }
 }

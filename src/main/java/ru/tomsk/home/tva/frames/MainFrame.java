@@ -44,8 +44,4 @@ public class MainFrame extends JFrame {
         addPanels();
         setVisible(true);
     }
-
-    public void setSourceDirectoryPanel(SourceDirectoryPanel sourceDirectoryPanel) {
-        this.sourceDirectoryPanel = sourceDirectoryPanel;
-    }
 }

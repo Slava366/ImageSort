@@ -13,13 +13,9 @@ public class ButtonsPanel {
     private JButton pause;
     private JButton start;
 
-    private OptionsDialog optionsDialog;
-
 
     public ButtonsPanel(Component parent) {
-        optionsDialog = new OptionsDialog(parent);
         options = new JButton(OPTIONS_TITLE);
-        options.addActionListener(actionEvent -> optionsDialog.setVisible(true));
         pause = new JButton(PAUSE_TITLE);
         start = new JButton(START_TITLE);
     }
@@ -35,9 +31,5 @@ public class ButtonsPanel {
                 panel2.add(start);
             panel.add(panel2, BorderLayout.CENTER);
         return panel;
-    }
-
-    public OptionsDialog getOptionsDialog() {
-        return optionsDialog;
     }
 }
