@@ -28,8 +28,8 @@ public class SourceDirectoryPanel {
         directory.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
-                if(!getDirectory().isEmpty()) buttonsPanel.getStart().setEnabled(true);
-                else buttonsPanel.getStart().setEnabled(false);
+                if(!getDirectory().isEmpty()) buttonsPanel.getStartButton().setEnabled(true);
+                else buttonsPanel.getStartButton().setEnabled(false);
             }
         });
     }
@@ -46,7 +46,7 @@ public class SourceDirectoryPanel {
                 fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
                 if(JFileChooser.APPROVE_OPTION == fileChooser.showOpenDialog(parent)) {
                     setDirectory(fileChooser.getSelectedFile().getAbsolutePath());
-                    buttonsPanel.getStart().setEnabled(true);
+                    buttonsPanel.getStartButton().setEnabled(true);
                 }
             });
             panel.add(button, BorderLayout.EAST);

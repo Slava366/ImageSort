@@ -47,7 +47,7 @@ public class MainFrame extends JFrame {
     }
 
     private void doStart() {
-        buttonsPanel.getStart().setEnabled(false);
-        buttonsPanel.getPause().setEnabled(false);
+        buttonsPanel.getStartButton().setEnabled(false);
+        buttonsPanel.getPauseButton().setEnabled(false);
     }
 }
