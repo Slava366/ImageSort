@@ -13,19 +13,20 @@ public class SourceDirectoryPanel {
     @Autowired
     private ButtonsPanel buttonsPanel;
 
-    private static final String LABEL_TEXT = "Source directory:";
+    private static final String LABEL_TEXT = "Source directoryTextField:";
     private static final String CHOOSE_BUTTON_TEXT = "...";
-    private static final String CHOOSE_DIALOG_TITLE = "Select source directory";
+    private static final String CHOOSE_DIALOG_TITLE = "Select source directoryTextField";
 
-    private JTextField directory;
+    private JTextField directoryTextField;
     private Component parent;
+    private JButton chooseButton;
 
 
     public SourceDirectoryPanel(Component parent) {
         this.parent = parent;
-        directory = new JTextField();
-        directory.setColumns(10);
-        directory.addKeyListener(new KeyAdapter() {
+        directoryTextField = new JTextField();
+        directoryTextField.setColumns(10);
+        directoryTextField.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
                 if(!getDirectory().isEmpty()) buttonsPanel.getStartButton().setEnabled(true);
@@ -38,9 +39,9 @@ public class SourceDirectoryPanel {
         JPanel panel = new JPanel(new BorderLayout(4, 4));
             panel.setBorder(BorderFactory.createEmptyBorder(8, 8, 8, 8));
             panel.add(new JLabel(LABEL_TEXT), BorderLayout.WEST);
-            panel.add(directory, BorderLayout.CENTER);
-            JButton button = new JButton(CHOOSE_BUTTON_TEXT);
-            button.addActionListener(actionEvent -> {
+            panel.add(directoryTextField, BorderLayout.CENTER);
+            chooseButton = new JButton(CHOOSE_BUTTON_TEXT);
+            chooseButton.addActionListener(actionEvent -> {
                 JFileChooser fileChooser = new JFileChooser(getDirectory());
                 fileChooser.setDialogTitle(CHOOSE_DIALOG_TITLE);
                 fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -49,16 +50,24 @@ public class SourceDirectoryPanel {
                     buttonsPanel.getStartButton().setEnabled(true);
                 }
             });
-            panel.add(button, BorderLayout.EAST);
+            panel.add(chooseButton, BorderLayout.EAST);
         return panel;
     }
 
+    public JTextField getDirectoryTextField() {
+        return directoryTextField;
+    }
+
+    public JButton getChooseButton() {
+        return chooseButton;
+    }
+
     public String getDirectory() {
-        return directory.getText();
+        return directoryTextField.getText();
     }
 
     public void setDirectory(String path) {
         if(null == path) throw new NullPointerException("Argument cannot be null!");
-        directory.setText(path);
+        directoryTextField.setText(path);
     }
 }

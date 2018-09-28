@@ -6,6 +6,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 @Component
 public class MainFrame extends JFrame {
@@ -15,6 +17,9 @@ public class MainFrame extends JFrame {
     @Autowired private LoggerPanel loggerPanel;
     @Autowired private ProgressPanel progressPanel;
     @Autowired private ButtonsPanel buttonsPanel;
+
+    private boolean sorting = false;
+
 
     private MainFrame() throws HeadlessException {
     }
@@ -37,17 +42,35 @@ public class MainFrame extends JFrame {
                 panel1.add(buttonsPanel.toJPanel(), BorderLayout.SOUTH);
             panel.add(panel1, BorderLayout.SOUTH);
         getContentPane().add(panel, BorderLayout.CENTER);
+        buttonsPanel.getStartButton().addActionListener(e -> doStart());
+        buttonsPanel.getPauseButton().addActionListener(e -> doPause());
     }
 
     @PostConstruct
     private void showFrame() {
         addPanels();
-        doStart();
+        buttonsPanel.getStartButton().setEnabled(false);
+        buttonsPanel.getPauseButton().setEnabled(false);
         setVisible(true);
     }
 
     private void doStart() {
+        sorting = true;
         buttonsPanel.getStartButton().setEnabled(false);
+        buttonsPanel.getPauseButton().setEnabled(true);
+        sourceDirectoryPanel.getDirectoryTextField().setEditable(false);
+        sourceDirectoryPanel.getChooseButton().setEnabled(false);
+        buttonsPanel.getLanguageButton().setEnabled(false);
+        buttonsPanel.getFolderButton().setEnabled(false);
+    }
+
+    private void doPause() {
+        sorting = false;
+        buttonsPanel.getStartButton().setEnabled(true);
         buttonsPanel.getPauseButton().setEnabled(false);
+        sourceDirectoryPanel.getDirectoryTextField().setEditable(true);
+        sourceDirectoryPanel.getChooseButton().setEnabled(true);
+        buttonsPanel.getLanguageButton().setEnabled(true);
+        buttonsPanel.getFolderButton().setEnabled(true);
     }
 }

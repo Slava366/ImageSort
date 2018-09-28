@@ -80,6 +80,14 @@ public class ButtonsPanel {
         return startButton;
     }
 
+    public JButton getLanguageButton() {
+        return languageButton;
+    }
+
+    public JButton getFolderButton() {
+        return folderButton;
+    }
+
     public LatLongDecoder.Language getLanguage() {
         return language;
     }
