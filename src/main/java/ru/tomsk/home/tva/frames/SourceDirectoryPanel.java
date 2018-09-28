@@ -4,6 +4,7 @@ package ru.tomsk.home.tva.frames;
 import javax.swing.*;
 import java.awt.*;
 
+@org.springframework.stereotype.Component
 public class SourceDirectoryPanel {
 
     private static final String LABEL_TEXT = "Source directory:";
