@@ -2,6 +2,7 @@ package ru.tomsk.home.tva.frames;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import ru.tomsk.home.tva.Sort;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
@@ -9,6 +10,9 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 @Component
 public class MainFrame extends JFrame {
@@ -18,8 +22,6 @@ public class MainFrame extends JFrame {
     @Autowired private LoggerPanel loggerPanel;
     @Autowired private ProgressPanel progressPanel;
     @Autowired private ButtonsPanel buttonsPanel;
-
-    private boolean sorting = false;
 
 
     private MainFrame() throws HeadlessException {
@@ -50,7 +52,8 @@ public class MainFrame extends JFrame {
             @Override
             public void keyReleased(KeyEvent e) {
                 if(!sourceDirectoryPanel.getDirectory().isEmpty()) {
-                    int amount = directoryFilesAmount(new File(sourceDirectoryPanel.getDirectory()));
+                    List<File> files = directoryFiles(new File(sourceDirectoryPanel.getDirectory()));
+                    int amount = files.size();
                     if(0 < amount) {
                         informationPanel.setTotal(amount);
                         buttonsPanel.getStartButton().setEnabled(true);
@@ -86,18 +89,15 @@ public class MainFrame extends JFrame {
             doPause();
             return;
         }
-        sorting = true;
         buttonsPanel.getStartButton().setEnabled(false);
         buttonsPanel.getPauseButton().setEnabled(true);
         sourceDirectoryPanel.getDirectoryTextField().setEditable(false);
         sourceDirectoryPanel.getChooseButton().setEnabled(false);
         buttonsPanel.getLanguageButton().setEnabled(false);
         buttonsPanel.getFolderButton().setEnabled(false);
-        //todo
     }
 
     private void doPause() {
-        sorting = false;
         buttonsPanel.getStartButton().setEnabled(true);
         buttonsPanel.getPauseButton().setEnabled(false);
         sourceDirectoryPanel.getDirectoryTextField().setEditable(true);
@@ -111,7 +111,8 @@ public class MainFrame extends JFrame {
         fileChooser.setDialogTitle(sourceDirectoryPanel.getChooseDialogTitle());
         fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
         if(JFileChooser.APPROVE_OPTION == fileChooser.showOpenDialog(this)) {
-            int amount = directoryFilesAmount(fileChooser.getSelectedFile());
+            List<File> files = directoryFiles(fileChooser.getSelectedFile());
+            int amount = files.size();
             if(0 < amount) {
                 informationPanel.setTotal(amount);
                 sourceDirectoryPanel.setDirectory(fileChooser.getSelectedFile().getAbsolutePath());
@@ -127,9 +128,17 @@ public class MainFrame extends JFrame {
         }
     }
 
-    private int directoryFilesAmount(File source) {
+    private List<File> directoryFiles(File source) {
         File[] files = source.listFiles(File::isFile);
-        if((null == files) || (0 == files.length)) return 0;
-        return files.length;
+        if(null == files) return new LinkedList<>();
+        return new LinkedList<>(Arrays.asList(files));
+    }
+
+    public ButtonsPanel getButtonsPanel() {
+        return buttonsPanel;
+    }
+
+    public InformationPanel getInformationPanel() {
+        return informationPanel;
     }
 }
