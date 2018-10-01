@@ -86,4 +86,11 @@ public class InformationPanel {
     public void setErrors(int value) {
         errors.setText(String.valueOf(value));
     }
+
+    public void clear() {
+        total.setText("0");
+        metadata.setText("0");
+        sorted.setText("0");
+        errors.setText("0");
+    }
 }

@@ -82,7 +82,7 @@ public class MetaFile {
         }
         if(null == date) {
             ExifIFD0Directory exif = metadata.getFirstDirectoryOfType(ExifIFD0Directory.class);
-            date = exif.getDate(ExifIFD0Directory.TAG_DATETIME);
+            if(null != exif) date = exif.getDate(ExifIFD0Directory.TAG_DATETIME);
         }
     }
 
@@ -144,7 +144,8 @@ public class MetaFile {
     public boolean moveToMetaFile(LatLongDecoder decoder, String missingGpsFolder) throws ParserConfigurationException, SAXException, XPathExpressionException, IOException {
         File metaFile = getMetaFile(decoder, missingGpsFolder);
         if(null == metaFile) return false;
-        if(!metaFile.getParentFile().mkdirs()) return false;
-        return file.renameTo(metaFile);
+        if(!metaFile.getParentFile().exists() & !metaFile.getParentFile().mkdirs()) return false;
+        return true;
+//        return file.renameTo(metaFile);
     }
 }

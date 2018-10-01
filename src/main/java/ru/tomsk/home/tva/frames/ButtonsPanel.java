@@ -12,9 +12,11 @@ public class ButtonsPanel {
     private static final String DEFAULT_FOLDER = "WithoutGPS";
     private static final String PAUSE_TITLE = "Pause";
     private static final String START_TITLE = "Sort";
+    private static final String CANCEL_TITLE = "Cancel";
 
     private JButton languageButton;
     private JButton folderButton;
+    private JButton cancelButton;
     private JButton pauseButton;
     private JButton startButton;
 
@@ -54,6 +56,7 @@ public class ButtonsPanel {
             if(null != inputFolder) folder = inputFolder.trim();
             folderButton.setToolTipText(folder);
         });
+        cancelButton = new JButton(CANCEL_TITLE);
         pauseButton = new JButton(PAUSE_TITLE);
         startButton = new JButton(START_TITLE);
     }
@@ -66,10 +69,15 @@ public class ButtonsPanel {
                 panel1.add(folderButton);
             panel.add(panel1, BorderLayout.WEST);
             JPanel panel2 = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+                panel2.add(cancelButton);
                 panel2.add(pauseButton);
                 panel2.add(startButton);
             panel.add(panel2, BorderLayout.CENTER);
         return panel;
+    }
+
+    public JButton getCancelButton() {
+        return cancelButton;
     }
 
     public JButton getPauseButton() {
