@@ -4,14 +4,11 @@ import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.tomsk.home.tva.Sortable;
-import ru.tomsk.home.tva.core.LatLongDecoder;
 import ru.tomsk.home.tva.core.SortFiles;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -220,5 +217,11 @@ public class MainFrame extends JFrame implements Sortable {
             case WARN: loggerPanel.addText(String.format("<b>%s</b>", message)); break;
             default: loggerPanel.addText(message);
         }
+    }
+
+    @Override
+    public void endSort() {
+        JOptionPane.showMessageDialog(this, "The sorting was finished", "Information", JOptionPane.INFORMATION_MESSAGE);
+        afterSort();
     }
 }

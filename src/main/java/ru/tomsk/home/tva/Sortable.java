@@ -15,4 +15,6 @@ public interface Sortable {
 
     void log(Level level, String message);
 
+    void endSort();
+
 }
