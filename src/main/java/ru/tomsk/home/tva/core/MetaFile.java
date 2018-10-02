@@ -145,7 +145,6 @@ public class MetaFile {
         File metaFile = getMetaFile(decoder, missingGpsFolder);
         if(null == metaFile) return false;
         if(!metaFile.getParentFile().exists() & !metaFile.getParentFile().mkdirs()) return false;
-        return true;
-//        return file.renameTo(metaFile);
+        return file.renameTo(metaFile);
     }
 }

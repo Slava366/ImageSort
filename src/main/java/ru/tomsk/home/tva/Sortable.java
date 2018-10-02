@@ -1,8 +1,18 @@
 package ru.tomsk.home.tva;
 
+import org.slf4j.event.Level;
+
+
 public interface Sortable {
-    void init();
-    void beforeSort();
-    void pauseSort();
-    void afterSort();
+
+    void addProgress();
+
+    void addWithMetadata();
+
+    void addSorted();
+
+    void addError();
+
+    void log(Level level, String message);
+
 }

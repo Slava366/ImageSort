@@ -1,12 +1,17 @@
 package ru.tomsk.home.tva.frames;
 
+import org.slf4j.event.Level;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.tomsk.home.tva.Sortable;
+import ru.tomsk.home.tva.core.LatLongDecoder;
+import ru.tomsk.home.tva.core.SortFiles;
 
 import javax.annotation.PostConstruct;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.File;
@@ -22,6 +27,8 @@ public class MainFrame extends JFrame implements Sortable {
     @Autowired private LoggerPanel loggerPanel;
     @Autowired private ProgressPanel progressPanel;
     @Autowired private ButtonsPanel buttonsPanel;
+
+    private SortFiles sortFiles;
 
 
     private MainFrame() throws HeadlessException {
@@ -45,9 +52,18 @@ public class MainFrame extends JFrame implements Sortable {
                 panel1.add(buttonsPanel.toJPanel(), BorderLayout.SOUTH);
             panel.add(panel1, BorderLayout.SOUTH);
         getContentPane().add(panel, BorderLayout.CENTER);
-        buttonsPanel.getStartButton().addActionListener(e -> doStart());
-        buttonsPanel.getPauseButton().addActionListener(e -> pauseSort());
-        buttonsPanel.getCancelButton().addActionListener(e -> afterSort());
+        buttonsPanel.getStartButton().addActionListener(e -> {
+            MainFrame.this.doStart();
+            sortFiles.setInProgress(true);
+        });
+        buttonsPanel.getPauseButton().addActionListener(e -> {
+            MainFrame.this.pauseSort();
+            sortFiles.setInProgress(false);
+        });
+        buttonsPanel.getCancelButton().addActionListener(e -> {
+            MainFrame.this.afterSort();
+            sortFiles.setExit(true);
+        });
         sourceDirectoryPanel.getChooseButton().addActionListener(e -> doChoose());
         sourceDirectoryPanel.getDirectoryTextField().addKeyListener(new KeyAdapter() {
             @Override
@@ -56,6 +72,12 @@ public class MainFrame extends JFrame implements Sortable {
                     List<File> files = directoryFiles(new File(sourceDirectoryPanel.getDirectory()));
                     int amount = files.size();
                     if(0 < amount) {
+                        sortFiles = SortFiles.withFrame(MainFrame.this)
+                                .setFiles(files)
+                                .setLanguage(buttonsPanel.getLanguage())
+                                .setWithoutGpsFolder(buttonsPanel.getFolder())
+                                .build();
+                        sortFiles.start();
                         init();
                         informationPanel.setTotal(amount);
                         progressPanel.setMaxValue(amount);
@@ -78,6 +100,12 @@ public class MainFrame extends JFrame implements Sortable {
             List<File> files = directoryFiles(fileChooser.getSelectedFile());
             int amount = files.size();
             if(0 < amount) {
+                sortFiles = SortFiles.withFrame(MainFrame.this)
+                        .setFiles(files)
+                        .setLanguage(buttonsPanel.getLanguage())
+                        .setWithoutGpsFolder(buttonsPanel.getFolder())
+                        .build();
+                sortFiles.start();
                 init();
                 informationPanel.setTotal(amount);
                 progressPanel.setMaxValue(amount);
@@ -122,7 +150,6 @@ public class MainFrame extends JFrame implements Sortable {
         return new LinkedList<>(Arrays.asList(files));
     }
 
-    @Override
     public void init() {
         sourceDirectoryPanel.getDirectoryTextField().setEnabled(true);
         sourceDirectoryPanel.getChooseButton().setEnabled(true);
@@ -136,7 +163,6 @@ public class MainFrame extends JFrame implements Sortable {
         buttonsPanel.getStartButton().setEnabled(false);
     }
 
-    @Override
     public void beforeSort() {
         sourceDirectoryPanel.getDirectoryTextField().setEnabled(false);
         sourceDirectoryPanel.getChooseButton().setEnabled(false);
@@ -147,7 +173,6 @@ public class MainFrame extends JFrame implements Sortable {
         buttonsPanel.getStartButton().setEnabled(false);
     }
 
-    @Override
     public void pauseSort() {
         sourceDirectoryPanel.getDirectoryTextField().setEnabled(false);
         sourceDirectoryPanel.getChooseButton().setEnabled(false);
@@ -158,7 +183,6 @@ public class MainFrame extends JFrame implements Sortable {
         buttonsPanel.getStartButton().setEnabled(true);
     }
 
-    @Override
     public void afterSort() {
         sourceDirectoryPanel.getDirectoryTextField().setEnabled(true);
         sourceDirectoryPanel.getChooseButton().setEnabled(true);
@@ -167,5 +191,34 @@ public class MainFrame extends JFrame implements Sortable {
         buttonsPanel.getCancelButton().setEnabled(false);
         buttonsPanel.getPauseButton().setEnabled(false);
         buttonsPanel.getStartButton().setEnabled(false);
+    }
+
+    @Override
+    public void addProgress() {
+        progressPanel.setCurrentValue(progressPanel.getCurrentValue() + 1);
+    }
+
+    @Override
+    public void addWithMetadata() {
+        informationPanel.setMetadata(informationPanel.getMetadata() + 1);
+    }
+
+    @Override
+    public void addSorted() {
+        informationPanel.setSorted(informationPanel.getSorted() + 1);
+    }
+
+    @Override
+    public void addError() {
+        informationPanel.setErrors(informationPanel.getErrors() + 1);
+    }
+
+    @Override
+    public void log(Level level, String message) {
+        switch(level) {
+            case ERROR: loggerPanel.addText(String.format("<font color=\"red\"><b>%s</b></font>", message)); break;
+            case WARN: loggerPanel.addText(String.format("<b>%s</b>", message)); break;
+            default: loggerPanel.addText(message);
+        }
     }
 }
